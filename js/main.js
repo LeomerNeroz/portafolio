@@ -198,77 +198,123 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /* =========================================
-   LÓGICA DEL FONDO DE PARTÍCULAS (HERO)
+   LÓGICA DEL FONDO DE PARTÍCULAS (CANVAS OPTIMIZADO)
 ========================================= */
 document.addEventListener("DOMContentLoaded", () => {
-    const particlesContainer = document.getElementById("tsparticles");
+    const canvas = document.querySelector('.particle-canvas');
+    if (!canvas) return;
 
-    if (particlesContainer) {
-        if (typeof tsParticles === 'undefined') {
-            console.error("Mentor: Falta incluir el script de tsParticles en tu HTML.");
-            return;
+    const ctx = canvas.getContext('2d');
+    let particlesArray = [];
+    let mouse = {
+        x: null,
+        y: null,
+        radius: 100
+    };
+
+    // 1. DEFINIR LA CLASE PRIMERO (Las clases no tienen hoisting)
+    class Particle {
+        constructor(x, y, directionX, directionY, size, color) {
+            this.x = x;
+            this.y = y;
+            this.directionX = directionX;
+            this.directionY = directionY;
+            this.size = size;
+            this.color = color;
+            this.baseX = this.x;
+            this.baseY = this.y;
+            this.density = (Math.random() * 30) + 1;
         }
 
-        tsParticles.load("tsparticles", {
-            fullScreen: { enable: false }, 
-            particles: {
-                number: { 
-                    value: 60, 
-                    limit: 120, // CRÍTICO: Límite máximo para evitar que el usuario crashee la web a base de clics
-                    density: { enable: true, value_area: 100 } 
-                },
-                color: { value: "#ffffff" },
-               // === AQUÍ ESTÁ EL CAMBIO A ESTRELLAS ===
-                shape: { 
-                    type: "star",
-                    options: {
-                        star: {
-                            sides: 5 // Puedes cambiar este número si quieres estrellas de más puntas
-                        }
-                    }
-                },
-                // =======================================
-                opacity: { value: 0.5 },
-                size: { value: { min: 3, max: 4 } },
-                links: {
-                    enable: true,
-                    distance: 150,
-                    color: "#ffffff",
-                    opacity: 0.4,
-                    width: 1
-                },
-                move: {
-                    enable: true,
-                    speed: 1.9,
-                    direction: "none",
-                    random: false,
-                    straight: false,
-                    outModes: "out"
+        draw() {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
+            ctx.fillStyle = this.color;
+            ctx.fill();
+        }
+
+        update() {
+            this.baseX += this.directionX;
+            this.baseY += this.directionY;
+
+            // Evitar que escapen de la pantalla
+            if (this.baseX > canvas.width || this.baseX < 0) this.directionX = -this.directionX;
+            if (this.baseY > canvas.height || this.baseY < 0) this.directionY = -this.directionY;
+
+            let dx = mouse.x - this.x;
+            let dy = mouse.y - this.y;
+            let distance = Math.sqrt(dx * dx + dy * dy);
+            
+            if (distance < mouse.radius) {
+                const forceDirectionX = dx / distance;
+                const forceDirectionY = dy / distance;
+                const maxDistance = mouse.radius;
+                const force = (maxDistance - distance) / maxDistance;
+                const directionX = forceDirectionX * force * this.density;
+                const directionY = forceDirectionY * force * this.density;
+
+                this.x -= directionX;
+                this.y -= directionY;
+            } else {
+                if (this.x !== this.baseX) {
+                    let dx = this.x - this.baseX;
+                    this.x -= dx / 10;
                 }
-            },
-            interactivity: {
-                events: {
-                    onHover: { 
-                        enable: true, 
-                        mode: "repulse" // Efecto de repeler el mouse
-                    },
-                    onClick: { 
-                        enable: true, 
-                        mode: "push" // Efecto de crear más partículas al hacer clic
-                    },
-                    resize: true
-                },
-                modes: {
-                    repulse: { 
-                        distance: 100, // Área de efecto (qué tan lejos huyen del mouse)
-                        duration: 0.4  // Qué tan rápido vuelven a su posición normal
-                    },
-                    push: { 
-                        quantity: 4 // Cuántas partículas nuevas se crean por cada clic
-                    }
+                if (this.y !== this.baseY) {
+                    let dy = this.y - this.baseY;
+                    this.y -= dy / 10;
                 }
-            },
-            detectRetina: true
-        });
+            }
+            this.draw();
+        }
     }
+
+    // 2. DEFINIR FUNCIONES QUE USAN LA CLASE
+    function init() {
+        particlesArray = [];
+        const isMobile = window.innerWidth < 768;
+        const numberOfParticles = isMobile ? 60 : 200; 
+
+        for (let i = 0; i < numberOfParticles; i++) {
+            let size = (Math.random() * 2) + 1;
+            let x = (Math.random() * ((innerWidth - size * 2) - (size * 2)) + size * 2);
+            let y = (Math.random() * ((innerHeight - size * 2) - (size * 2)) + size * 2);
+            let directionX = (Math.random() * 0.5) - 0.25;
+            let directionY = (Math.random() * 0.5) - 0.25;
+            let color = 'rgba(88, 166, 255, 0.5)';
+
+            particlesArray.push(new Particle(x, y, directionX, directionY, size, color));
+        }
+    }
+
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        init(); 
+    }
+
+    function animate() {
+        requestAnimationFrame(animate);
+        ctx.clearRect(0, 0, innerWidth, innerHeight);
+
+        for (let i = 0; i < particlesArray.length; i++) {
+            particlesArray[i].update();
+        }
+    }
+
+    // 3. EJECUTAR TODO (Ahora que el motor ya conoce las definiciones)
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    window.addEventListener('mousemove', function(event) {
+        mouse.x = event.x;
+        mouse.y = event.y;
+    });
+
+    window.addEventListener('mouseout', function() {
+        mouse.x = undefined;
+        mouse.y = undefined;
+    });
+
+    animate();
 });

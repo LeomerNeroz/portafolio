@@ -19,7 +19,6 @@
     box-sizing: border-box;
 }
 
-
 body {
     background-color: var(--bg-color);
     color: var(--text-main);
@@ -28,6 +27,22 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
+/* =========================================
+   CANVAS DE PARTÍCULAS OPTIMIZADO
+========================================= */
+.particle-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 90; /* Lo subimos casi al tope. Quedará por debajo de la Navbar (100) y los Modales (999) */
+    pointer-events: none; /* CRÍTICO: Permite que los clics atraviesen el canvas y lleguen a tus botones */
+}
+
+/* =========================================
+   ESTRUCTURA GENERAL
+========================================= */
 .container {
     max-width: 1100px;
     margin: 0 auto;
@@ -65,6 +80,8 @@ h1, h2, h3 {
     font-weight: 600;
     border: 2px solid var(--primary-color);
     transition: var(--transition);
+    position: relative;
+    z-index: 2;
 }
 
 .btn-primary:hover {
@@ -73,7 +90,6 @@ h1, h2, h3 {
     transform: translateY(-2px);
 }
 
-/* NUEVO: Botón para descargar CV */
 .btn-secondary {
     display: inline-block;
     background-color: transparent;
@@ -83,6 +99,8 @@ h1, h2, h3 {
     font-weight: 600;
     border: 2px solid var(--primary-color);
     transition: var(--transition);
+    position: relative;
+    z-index: 2;
 }
 
 .btn-secondary:hover {
@@ -92,8 +110,8 @@ h1, h2, h3 {
 
 /* --- Efecto de cursor parpadeante --- */
 .cursor {
-    color: var(--primary-color); /* Toma tu color azul técnico. Cámbialo a #ffffff si lo quieres blanco */
-    font-weight: 300; /* Lo hace un poco más delgado, como un cursor real */
+    color: var(--primary-color);
+    font-weight: 300; 
     animation: blink 1s step-end infinite;
 }
 
@@ -119,7 +137,7 @@ h1, h2, h3 {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    position: relative; /* Necesario para que el menú móvil se posicione bien */
+    position: relative;
 }
 
 .logo {
@@ -146,7 +164,7 @@ h1, h2, h3 {
 }
 
 .menu-icon {
-    display: none; /* Oculto en PC */
+    display: none;
     font-size: 2rem;
     color: var(--text-main);
     cursor: pointer;
@@ -156,11 +174,14 @@ h1, h2, h3 {
 .menu-icon:hover {
     color: var(--primary-color);
 }
+
 /* =========================================
    SECCIONES
 ========================================= */
 .section {
     padding: 100px 0;
+    position: relative;
+    z-index: 2; /* Para que quede por encima del canvas */
 }
 
 .section-header {
@@ -173,19 +194,20 @@ h1, h2, h3 {
     margin-bottom: 0.5rem;
 }
 
-/* --- Hero (Actualizado con imagen de fondo y filtro oscuro) --- */
+/* --- Hero --- */
 .hero {
-    /* El linear-gradient actúa como un filtro oscuro semitransparente sobre la imagen */
     background: linear-gradient(135deg, rgba(13, 17, 23, 0.85) 0%, rgba(22, 27, 34, 0.95) 100%),
-                url('../img/fondo.png'); /* REEMPLAZA AQUÍ CON EL NOMBRE DE TU IMAGEN */
-    background-size: cover; /* Hace que la imagen cubra todo el espacio sin deformarse */
-    background-position: center; /* Centra la imagen */
-    background-repeat: no-repeat; /* Evita que la imagen se repita como mosaico */
+                url('../img/fondo.png'); 
+    background-size: cover; 
+    background-position: center; 
+    background-repeat: no-repeat; 
     padding: 120px 0;
     min-height: 80vh;
     display: flex;
     align-items: center;
     border-bottom: 1px solid var(--border-color);
+    position: relative;
+    z-index: 1; /* Permite ver el canvas o superponerse adecuadamente */
 }
 
 .hero-layout {
@@ -217,15 +239,18 @@ h1, h2, h3 {
     display: flex;
     align-items: center;
     gap: 2rem;
+    position: relative;
+    z-index: 10;
 }
 
 .social-links a {
     font-size: 2rem;
     color: var(--text-muted);
+    position: relative;
+    z-index: 10;
 }
 .social-links a:hover { color: #ffffff; }
 
-/* -- Estilos del Avatar -- */
 .hero-image {
     flex: 1;
     display: flex;
@@ -249,7 +274,7 @@ h1, h2, h3 {
     box-shadow: 0 15px 35px rgba(88, 166, 255, 0.3);
 }
 
-/* --- Stack Tecnológico (CSS GRID REAL) --- */
+/* --- Stack Tecnológico --- */
 .skills-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -261,22 +286,15 @@ h1, h2, h3 {
     padding: 2rem;
     border-radius: 12px;
     border: 1px solid var(--border-color);
+    transition: var(--transition); 
+    position: relative;
+    overflow: hidden; 
 }
 
-/* --- Contenedor de la Categoría (Frontend, Backend, etc.) --- */
-.skill-category {
-    background-color: var(--surface-color);
-    padding: 2rem;
-    border-radius: 12px;
-    border: 1px solid var(--border-color);
-    transition: var(--transition); /* Aseguramos que la transición sea suave */
-}
-
-/* Efecto hover de la tarjeta completa */
 .skill-category:hover {
-    transform: translateY(-5px); /* Se eleva un poco */
+    transform: translateY(-5px); 
     border-color: var(--primary-color);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* Sombra para dar profundidad */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); 
 }
 
 .skill-category h3 {
@@ -292,7 +310,6 @@ h1, h2, h3 {
     gap: 10px;
 }
 
-/* --- Etiqueta individual de cada habilidad (HTML, PHP, etc.) --- */
 .skill-tag {
     background: rgba(88, 166, 255, 0.1);
     color: var(--primary-color);
@@ -304,15 +321,16 @@ h1, h2, h3 {
     align-items: center;
     gap: 5px;
     border: 1px solid rgba(88, 166, 255, 0.2);
-    transition: var(--transition); /* Suavidad en la animación */
-    cursor: default; /* Indica que es un elemento interactivo pero no un link */
+    transition: var(--transition); 
+    cursor: default; 
+    position: relative;
+    overflow: hidden; 
 }
 
-/* Efecto hover del tag: Hace 'pop', invierte colores y brilla */
 .skill-tag:hover {
-    transform: scale(1.1) translateY(-2px); /* Crece un 10% y sube ligeramente */
-    background: var(--primary-color); /* Fondo azul */
-    color: #000000; /* Texto oscuro para contraste */
+    transform: scale(1.1) translateY(-2px); 
+    background: var(--primary-color); 
+    color: #000000; 
     border-color: var(--primary-color);
     box-shadow: 0 5px 15px rgba(88, 166, 255, 0.4);
 }
@@ -330,6 +348,7 @@ h1, h2, h3 {
     overflow: hidden;
     border: 1px solid var(--border-color);
     transition: var(--transition);
+    position: relative;
 }
 
 .project-card:hover {
@@ -338,12 +357,37 @@ h1, h2, h3 {
 }
 
 .project-img-placeholder {
-    height: 200px;
+    position: relative;
+    height: 220px;
     background-color: #21262d;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--text-muted);
+    cursor: pointer;
+    overflow: hidden; 
+}
+
+.preview-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+    transition: transform 0.5s ease;
+}
+
+.project-card:hover .preview-img {
+    transform: scale(1.08);
+}
+
+.overlay-hover {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(13, 17, 23, 0.85);
+    display: flex; justify-content: center; align-items: center; gap: 10px;
+    color: var(--primary-color);
+    font-size: 1.2rem; font-weight: 600;
+    opacity: 0; transition: var(--transition);
+    z-index: 2; 
+}
+
+.project-img-placeholder:hover .overlay-hover {
+    opacity: 1;
 }
 
 .project-content {
@@ -366,160 +410,19 @@ h1, h2, h3 {
     align-items: center;
     gap: 5px;
     font-weight: 600;
-}
-
-/* =========================================
-   FOOTER
-========================================= */
-footer {
-    border-top: 1px solid var(--border-color);
-    padding: 80px 0 40px;
-    margin-top: 50px;
-}
-
-.footer-copy {
-    color: var(--text-muted);
-    font-size: 0.9rem;
-    margin-top: 3rem;
-}
-
-/* =========================================
-   RESPONSIVE DESIGN (Actualizado)
-========================================= */
-@media (max-width: 768px) {
-    /* --- Menú de Navegación --- */
-    .menu-icon { 
-        display: block; /* Muestra la hamburguesa */
-    }
-    
-    .nav-links {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        width: 100%;
-        background: rgba(13, 17, 23, 0.98); /* Fondo casi sólido para legibilidad */
-        backdrop-filter: blur(10px);
-        flex-direction: column;
-        padding: 20px 0;
-        border-bottom: 1px solid var(--border-color);
-        display: none; /* Oculto por defecto */
-        box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-    }
-    
-    .nav-links.active { 
-        display: flex; /* Se muestra cuando JS añade la clase 'active' */
-    }
-
-    /* --- Hero --- */
-    .hero { padding: 80px 0; }
-    
-    .hero-layout { 
-        flex-direction: column-reverse;
-        text-align: center;
-        gap: 2rem;
-        margin-top: 0; /* Anula el margen negativo en móviles */
-    }
-    
-    .hero-text h1 { font-size: 2.5rem; }
-    .hero-actions { flex-direction: column; justify-content: center; }
-    .hero-text p { margin: 0 auto 2.5rem; }
-    .avatar-img { max-width: 250px; }
-    
-    /* --- Contacto --- */
-    .contact-layout {
-        padding: 2rem 1.5rem;
-        gap: 3rem;
-    }
-}
-
-/* =========================================
-   ANIMACIÓN DE REFLEJO (SHINE EFFECT)
-========================================= */
-
-/* 1. Preparamos los contenedores para que el reflejo no se salga de los bordes */
-.skill-category,
-.skill-tag,
-.project-card {
     position: relative;
-    overflow: hidden; 
+    z-index: 10;
 }
 
-/* 2. Construimos el "rayo de luz" (invisible por defecto a la izquierda) */
-.skill-category::before,
-.skill-tag::before,
-.project-card::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -150%;
-    width: 50%;
-    height: 100%;
-    /* Gradiente blanco semitransparente */
-    background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0) 100%);
-    transform: skewX(-25deg); /* Inclinación del rayo */
-    z-index: 1;
-    pointer-events: none; /* Evita que el rayo bloquee los clics en los enlaces */
-}
-
-/* 3. Disparamos la animación al hacer Hover */
-.skill-category:hover::before,
-.skill-tag:hover::before,
-.project-card:hover::before {
-    animation: shine 0.75s ease-in-out;
-}
-
-/* 4. Fotogramas clave de la animación */
-@keyframes shine {
-    0% { left: -150%; }
-    100% { left: 150%; }
-}
-
-
-/* --- Contenedor de la imagen de vista previa --- */
-.project-img-placeholder {
-    position: relative;
-    height: 220px;
-    background-color: #21262d;
-    cursor: pointer;
-    overflow: hidden; /* Mantiene la imagen dentro de los bordes al hacer zoom */
-}
-
-/* --- La imagen real de vista previa --- */
-.preview-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Evita que la imagen se deforme, actúa como background-size: cover */
-    transition: transform 0.5s ease;
-}
-
-/* Efecto de zoom sutil al pasar el mouse por toda la tarjeta */
-.project-card:hover .preview-img {
-    transform: scale(1.08);
-}
-
-/* --- Capa oscura que aparece al hacer hover --- */
-.overlay-hover {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(13, 17, 23, 0.85);
-    display: flex; justify-content: center; align-items: center; gap: 10px;
-    color: var(--primary-color);
-    font-size: 1.2rem; font-weight: 600;
-    opacity: 0; transition: var(--transition);
-    z-index: 2; /* Asegura que el texto quede por encima de la imagen */
-}
-
-.project-img-placeholder:hover .overlay-hover {
-    opacity: 1;
-}
-
-/* Estructura de la ventana emergente */
+/* =========================================
+   MODAL DE GALERÍA
+========================================= */
 .modal-nativo {
     display: none; 
     position: fixed; z-index: 999;
     left: 0; top: 0; width: 100%; height: 100%;
     background-color: rgba(0,0,0,0.9);
-    backdrop-filter: blur(5px); /* Desenfoque del fondo */
+    backdrop-filter: blur(5px); 
 }
 
 .modal-contenido {
@@ -535,7 +438,6 @@ footer {
     object-fit: contain;
 }
 
-/* Botones de control */
 .cerrar-modal {
     position: absolute; top: 15px; right: 35px;
     color: #f1f1f1; font-size: 45px; font-weight: bold; cursor: pointer;
@@ -556,9 +458,6 @@ footer {
 .next { right: 5%; border-radius: 6px; }
 .prev:hover, .next:hover { background-color: var(--primary-color); color: #000; }
 
-/* =========================================
-   INDICADORES DE CARRUSEL (PUNTITOS)
-========================================= */
 .carousel-dots {
     position: absolute;
     bottom: 15px;
@@ -567,8 +466,8 @@ footer {
     display: flex;
     justify-content: center;
     gap: 8px;
-    z-index: 3; /* Asegura que estén por encima de la imagen y la capa oscura */
-    pointer-events: none; /* Evita que bloqueen el clic para abrir el modal */
+    z-index: 3; 
+    pointer-events: none; 
 }
 
 .dot {
@@ -577,7 +476,7 @@ footer {
     background-color: rgba(255, 255, 255, 0.4);
     border-radius: 50%;
     transition: all 0.3s ease;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.5); /* Sombra para que se lean sobre fotos claras */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.5); 
 }
 
 .dot.active {
@@ -589,155 +488,132 @@ footer {
 /* =========================================
    SECCIÓN DE CONTACTO
 ========================================= */
-/* --- Fondo de la sección a pantalla completa --- */
 .contact-section {
-    /* El gradiente oscuro asegura que el texto y el formulario se lean perfectamente sobre la imagen */
     background: linear-gradient(135deg, rgba(13, 17, 23, 0.8) 0%, rgba(22, 27, 34, 0.9) 100%),
-                url('../img/fondocontacto.png'); /* REEMPLAZA CON LA RUTA DE TU IMAGEN */
+                url('../img/fondocontacto.png'); 
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     padding: 100px 0;
     border-top: 1px solid var(--border-color);
     margin-top: 50px;
+    position: relative;
+    z-index: 2;
 }
 
-/* Modificamos la tarjeta del formulario para que resalte sobre el nuevo fondo */
 .contact-layout {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
     gap: 4rem;
-    background-color: rgba(22, 27, 34, 0.6); /* Fondo semi-transparente estilo cristal */
-    backdrop-filter: blur(10px); /* Desenfoque para que parezca cristal (Glassmorphism) */
+    background-color: rgba(22, 27, 34, 0.6); 
+    backdrop-filter: blur(10px); 
     padding: 3rem;
     border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
-.contact-info h3 {
-    margin-bottom: 1.5rem;
-    font-size: 1.5rem;
-}
+.contact-info h3 { margin-bottom: 1.5rem; font-size: 1.5rem; }
+.contact-info p { color: var(--text-muted); margin-bottom: 2rem; }
 
-.contact-info p {
-    color: var(--text-muted);
-    margin-bottom: 2rem;
-}
-
-.info-list {
-    list-style: none;
-    margin-bottom: 2rem;
-}
-
+.info-list { list-style: none; margin-bottom: 2rem; }
 .info-list li {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 1rem;
-    color: var(--text-main);
-    font-weight: 600;
+    display: flex; align-items: center; gap: 10px; margin-bottom: 1rem;
+    color: var(--text-main); font-weight: 600;
 }
+.info-list i { font-size: 1.5rem; color: var(--primary-color); }
 
-.info-list i {
-    font-size: 1.5rem;
-    color: var(--primary-color);
-}
-
-/* --- Estilos del Formulario --- */
-.contact-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-}
-
-.form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.form-group label {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--text-main);
-}
+.contact-form { display: flex; flex-direction: column; gap: 1.5rem; }
+.form-group { display: flex; flex-direction: column; gap: 0.5rem; }
+.form-group label { font-size: 0.9rem; font-weight: 600; color: var(--text-main); }
 
 .form-group input,
 .form-group textarea {
-    width: 100%;
-    padding: 12px 15px;
-    background-color: var(--bg-color);
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    color: var(--text-main);
-    font-family: var(--font-base);
-    transition: var(--transition);
+    width: 100%; padding: 12px 15px;
+    background-color: var(--bg-color); border: 1px solid var(--border-color);
+    border-radius: 6px; color: var(--text-main);
+    font-family: var(--font-base); transition: var(--transition);
 }
 
-/* Efecto Focus: Cuando el usuario hace clic para escribir */
 .form-group input:focus,
 .form-group textarea:focus {
-    outline: none;
-    border-color: var(--primary-color);
+    outline: none; border-color: var(--primary-color);
     box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.2);
 }
 
-.w-100 {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    font-size: 1.1rem;
-}
+.w-100 { width: 100%; display: flex; justify-content: center; align-items: center; gap: 10px; font-size: 1.1rem; }
 
-/* --- Footer Minimalista --- */
+/* =========================================
+   FOOTER
+========================================= */
 .site-footer {
     border-top: 1px solid var(--border-color);
     padding: 40px 0;
     background-color: var(--surface-color);
+    position: relative;
+    z-index: 2;
+}
+.footer-copy { color: var(--text-muted); font-size: 0.9rem; margin-top: 3rem; }
+
+/* =========================================
+   RESPONSIVE DESIGN
+========================================= */
+@media (max-width: 768px) {
+    .menu-icon { display: block; }
+    
+    .nav-links {
+        position: absolute; top: 100%; left: 0; width: 100%;
+        background: rgba(13, 17, 23, 0.98); backdrop-filter: blur(10px);
+        flex-direction: column; padding: 20px 0;
+        border-bottom: 1px solid var(--border-color);
+        display: none; box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+    }
+    
+    .nav-links.active { display: flex; }
+
+    .hero { padding: 80px 0; }
+    .hero-layout { 
+        flex-direction: column-reverse; text-align: center; gap: 2rem; margin-top: 0; 
+    }
+    .hero-text h1 { font-size: 2.5rem; }
+    .hero-actions { flex-direction: column; justify-content: center; }
+    .hero-text p { margin: 0 auto 2.5rem; }
+    .avatar-img { max-width: 250px; }
+    
+    .contact-layout { padding: 2rem 1.5rem; gap: 3rem; }
 }
 
-/* Ajuste móvil para el contacto */
-@media (max-width: 768px) {
-    .contact-layout {
-        padding: 2rem 1.5rem;
-        gap: 3rem;
-    }
+/* =========================================
+   ANIMACIÓN DE REFLEJO (SHINE EFFECT)
+========================================= */
+.skill-category::before, .skill-tag::before, .project-card::before {
+    content: ""; position: absolute; top: 0; left: -150%; width: 50%; height: 100%;
+    background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0) 100%);
+    transform: skewX(-25deg); z-index: 1; pointer-events: none;
+}
+
+.skill-category:hover::before, .skill-tag:hover::before, .project-card:hover::before {
+    animation: shine 0.75s ease-in-out;
+}
+
+@keyframes shine {
+    0% { left: -150%; }
+    100% { left: 150%; }
 }
 
 /* =========================================
    NOTIFICACIÓN TOAST (MENSAJE DE ÉXITO)
 ========================================= */
 .toast-notification {
-    position: fixed;
-    bottom: -100px; /* Oculto por debajo de la pantalla inicialmente */
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #2ea043; /* Verde de éxito */
-    color: #ffffff;
-    padding: 16px 32px;
-    border-radius: 50px;
-    font-size: 1.1rem;
-    font-weight: 600;
+    position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%);
+    background-color: #2ea043; color: #ffffff; padding: 16px 32px;
+    border-radius: 50px; font-size: 1.1rem; font-weight: 600;
     box-shadow: 0 10px 30px rgba(46, 160, 67, 0.4);
-    z-index: 9999;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    opacity: 0;
-    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); /* Efecto rebote */
+    z-index: 9999; display: flex; align-items: center; gap: 10px;
+    opacity: 0; transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); 
 }
 
-/* Clase que JavaScript agregará para mostrarlo */
-.toast-notification.show {
-    bottom: 40px;
-    opacity: 1;
-}
-
-/* Variante roja por si hay error */
+.toast-notification.show { bottom: 40px; opacity: 1; }
 .toast-notification.error {
-    background-color: #d73a49;
-    box-shadow: 0 10px 30px rgba(215, 58, 73, 0.4);
+    background-color: #d73a49; box-shadow: 0 10px 30px rgba(215, 58, 73, 0.4);
 }
